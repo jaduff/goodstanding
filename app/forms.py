@@ -7,7 +7,7 @@ class LoginForm(Form):
     openid = StringField('openid', validators=[DataRequired()])
     remember_me = BooleanField('remember_me', default=False)
 
-class AddClassForm(Form):
+class ClassForm(Form):
     classCode = StringField('Class Code', validators=[DataRequired()])
     cohort = IntegerField('Cohort', validators=[DataRequired()])
     submit = SubmitField('Submit')

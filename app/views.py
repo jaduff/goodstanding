@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect
 from app import app, db
-from .forms import LoginForm, AddClassForm
+from .forms import LoginForm, ClassForm
 from .models import gsClass
 
 
@@ -45,14 +45,34 @@ def classes():
 
 @app.route('/classes/add', methods=['GET', 'POST'])
 def addClass():
-    form = AddClassForm()
+    form = ClassForm()
     if form.validate_on_submit():
-        gsclass = gsClass(classCode=form.classCode.data, cohort=int(form.cohort.data))
+        gsclass = gsClass(classCode=form.classCode.data, cohort=form.cohort.data)
         db.session.add(gsclass)
         db.session.commit()
         flash('Added class, classCode=%s' %
               (form.classCode.data))
         return redirect('/classes')
-    return render_template('addclass.html',
+    return render_template('modifyclass.html',
                            title='Add New Class',
+                           form=form)
+
+@app.route('/classes/modify/<classcode>', methods=['GET', 'POST'])
+def modifyClass(classcode):
+    gsclass = gsClass.query.filter_by(classCode=classcode).first()
+    if gsclass == None:
+        flash('Sorry, class ' + classcode + ' doesn\'t exist')
+        return redirect('/classes')
+    form = ClassForm(obj=gsclass)
+    if form.validate_on_submit():
+        gsclass.classCode = form.classCode.data
+        gsclass.cohort = form.cohort.data
+        db.session.add(gsclass)
+        db.session.commit()
+        flash('Modified class, classCode=%s' %
+              (form.classCode.data))
+        return redirect('/classes')
+    form.populate_obj(gsclass)
+    return render_template('modifyclass.html',
+                           title='Edit Class',
                            form=form)
