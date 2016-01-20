@@ -1,0 +1,10 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+    <script type="text/javascript">
+    </script>
+    <h1>Add Class</h1>
+    {{ wtf.quick_form(form) }}
+{% endblock %}

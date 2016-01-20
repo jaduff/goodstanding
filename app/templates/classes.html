@@ -1,0 +1,11 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Hi, {{ user.firstname }}!</h1>
+    {% for gsClass in gsClasses|sort(attribute='cohort') %}
+    <p>
+      {{ gsClass.classCode }}
+    </p>
+    {% endfor %}
+{% endblock %}
