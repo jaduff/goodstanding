@@ -13,7 +13,7 @@ from app import db
 class gsClass(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     classCode = db.Column(db.String(64), index=True, unique=False)
-    cohort = db.Column(db.String(120), index=True, unique=False)
+    cohort = db.Column(db.Integer, index=True, unique=False)
     teacher = db.Column(db.String(120), index=True, unique=False)
     calendarYear = db.Column(db.Integer, index=True, unique=False)
  

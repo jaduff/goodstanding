@@ -40,7 +40,7 @@ def login():
 def classes():
     return render_template('classes.html',
                            title='Class List',
-                           gsClasses= gsClass.query.all(),
+                           gsClasses= gsClass.query.order_by(gsClass.cohort),
                            user= {'firstname': 'james'})
 
 @app.route('/classes/add', methods=['GET', 'POST'])
