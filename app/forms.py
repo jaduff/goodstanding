@@ -9,5 +9,5 @@ class LoginForm(Form):
 
 class AddClassForm(Form):
     classCode = StringField('Class Code', validators=[DataRequired()])
-    cohort = IntegerField('Cohort', validators=[DataRequired(), Length(max=1)])
+    cohort = IntegerField('Cohort', validators=[DataRequired()])
     submit = SubmitField('Submit')

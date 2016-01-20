@@ -1,6 +1,7 @@
 from flask import render_template, flash, redirect
-from app import app
+from app import app, db
 from .forms import LoginForm, AddClassForm
+from .models import gsClass
 
 
 @app.route('/')
@@ -39,14 +40,16 @@ def login():
 def classes():
     return render_template('classes.html',
                            title='Class List',
-                           gsClasses= [{'classCode': '7sci_1', 'cohort': '7'},
-                               {'classCode': '9t&e_1', 'cohort': '9'}],
+                           gsClasses= gsClass.query.all(),
                            user= {'firstname': 'james'})
 
 @app.route('/classes/add', methods=['GET', 'POST'])
 def addClass():
     form = AddClassForm()
     if form.validate_on_submit():
+        gsclass = gsClass(classCode=form.classCode.data, cohort=int(form.cohort.data))
+        db.session.add(gsclass)
+        db.session.commit()
         flash('Added class, classCode=%s' %
               (form.classCode.data))
         return redirect('/classes')

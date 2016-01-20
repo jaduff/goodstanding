@@ -2,10 +2,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Hi, {{ user.firstname }}!</h1>
+    <h1>{{ user.firstname }}'s Classes</h1>
     {% for gsClass in gsClasses|sort(attribute='cohort') %}
     <p>
-      {{ gsClass.classCode }}
+    {{ gsClass.classCode }} - {{ gsClass.cohort }}
     </p>
     {% endfor %}
 {% endblock %}

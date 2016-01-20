@@ -10,7 +10,7 @@ from app import db
 #     def __repr__(self):
 #         return '<User %r>' % (self.username)
 
-class gsClasses(db.Model):
+class gsClass(db.Model):
      id = db.Column(db.Integer, primary_key=True)
      classCode = db.Column(db.String(64), index=True, unique=False)
      cohort = db.Column(db.String(120), index=True, unique=False)
@@ -18,7 +18,7 @@ class gsClasses(db.Model):
      calendarYear = db.Column(db.Integer, index=True, unique=False)
 # 
 # class gsClassStudent(db.Model):
-#     classid = db.Column(db.Integer, db.ForeignKey('gsClasses.id'))
+#     classid = db.Column(db.Integer, db.ForeignKey('gsClass.id'))
 #     studentid = db.Column(db.Integer, db.ForeignKey('gsStudent.id'))
 #     classStudentid = db.Column(db.Integer, primary_key=True)
 # 
