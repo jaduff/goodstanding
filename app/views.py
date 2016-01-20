@@ -47,12 +47,15 @@ def classes():
 def addClass():
     form = AddClassForm()
     if form.validate_on_submit():
-        gsclass = gsClass(classCode=form.classCode.data, cohort=form.cohort.data)
-        db.session.add(gsclass)
-        db.session.commit()
-        flash('Added class, classCode=%s' %
-              (form.classCode.data))
-        return redirect('/classes')
+        if gsClass.query.filter_by(classCode=form.classCode.data).first() == None:
+            gsclass = gsClass(classCode=form.classCode.data, cohort=form.cohort.data)
+            db.session.add(gsclass)
+            db.session.commit()
+            flash('Added class, classCode=%s' %
+                  (form.classCode.data))
+            return redirect('/classes')
+        else:
+            flash('Sorry, the class %s already exists.' % (form.classCode.data))
     return render_template('modifyclass.html',
                            title='Add New Class',
                            form=form)
