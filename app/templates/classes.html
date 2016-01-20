@@ -4,10 +4,12 @@
 {% block page_content %}
 	<div class="page-header">
     <h1>{{ user.firstname }}'s Classes</h1>
+    <table class="table table-striped table-hover table-responsive">
+	    <tr><th>Class Code</th><th>Cohort</th><th>&nbsp;</th></tr>
     {% for gsClass in gsClasses|sort(attribute='cohort') %}
-    <p>
-    {{ gsClass.classCode }} - {{ gsClass.cohort }}
-    </p>
+    <tr><td>{{ gsClass.classCode }}</td><td>{{ gsClass.cohort }}</td><td><a href="{{ url_for('modifyClass', classcode=gsClass.classCode)}}">Edit</a></td></tr>
     {% endfor %}
+    </table>
+    <a href="{{ url_for('addClass') }}" class="gsButton">Add New Class</a>
 	</div>
 {% endblock %}

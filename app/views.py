@@ -39,7 +39,7 @@ def addClass():
             gsclass = gsClass(classCode=form.classCode.data, cohort=form.cohort.data)
             db.session.add(gsclass)
             db.session.commit()
-            flash('Added class, classCode=%s' %
+            flash('Added class: %s' %
                   (form.classCode.data))
             return redirect('/classes')
         else:
@@ -74,12 +74,13 @@ def modifyClass(classcode):
 def deleteClass(classcode):
     gsclass = gsClass.query.filter_by(classCode=classcode).first()
     form = DeleteClassForm(obj=gsclass)
+    form.confirmDelete.class_="warning"
     if form.validate_on_submit():
         db.session.delete(gsclass)
         db.session.commit()
         flash('Class %s has been deleted' % (form.classCode.data))
         return redirect('/classes')
-    flash('Are you sure you want to delete class %s' % (form.classCode.data))
+    flash('Are you sure you want to delete class %s? This action cannot be undone.' % (form.classCode.data))
     return render_template('modifyclass.html',
                            title='Delete Class',
                            form=form)
