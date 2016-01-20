@@ -1,6 +1,6 @@
 from flask import render_template, flash, redirect
 from app import app, db
-from .forms import LoginForm, ClassForm
+from .forms import LoginForm, ClassForm, AddClassForm, EditClassForm, DeleteClassForm
 from .models import gsClass
 
 
@@ -45,7 +45,7 @@ def classes():
 
 @app.route('/classes/add', methods=['GET', 'POST'])
 def addClass():
-    form = ClassForm()
+    form = AddClassForm()
     if form.validate_on_submit():
         gsclass = gsClass(classCode=form.classCode.data, cohort=form.cohort.data)
         db.session.add(gsclass)
@@ -63,8 +63,10 @@ def modifyClass(classcode):
     if gsclass == None:
         flash('Sorry, class ' + classcode + ' doesn\'t exist')
         return redirect('/classes')
-    form = ClassForm(obj=gsclass)
+    form = EditClassForm(obj=gsclass)
     if form.validate_on_submit():
+        if form.delete.data == True:
+            return redirect('/classes/delete/%s' % (form.classCode.data))
         gsclass.classCode = form.classCode.data
         gsclass.cohort = form.cohort.data
         db.session.add(gsclass)
@@ -75,4 +77,18 @@ def modifyClass(classcode):
     form.populate_obj(gsclass)
     return render_template('modifyclass.html',
                            title='Edit Class',
+                           form=form)
+
+@app.route('/classes/delete/<classcode>', methods=['GET', 'POST'])
+def deleteClass(classcode):
+    gsclass = gsClass.query.filter_by(classCode=classcode).first()
+    form = DeleteClassForm(obj=gsclass)
+    if form.validate_on_submit():
+        db.session.delete(gsclass)
+        db.session.commit()
+        flash('Class %s has been deleted' % (form.classCode.data))
+        return redirect('/classes')
+    flash('Are you sure you want to delete class %s' % (form.classCode.data))
+    return render_template('modifyclass.html',
+                           title='Delete Class',
                            form=form)

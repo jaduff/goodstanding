@@ -10,4 +10,13 @@ class LoginForm(Form):
 class ClassForm(Form):
     classCode = StringField('Class Code', validators=[DataRequired()])
     cohort = IntegerField('Cohort', validators=[DataRequired()])
+
+class AddClassForm(ClassForm):
     submit = SubmitField('Submit')
+
+class EditClassForm(ClassForm):
+    submit = SubmitField('Submit')
+    delete = SubmitField('Delete')
+
+class DeleteClassForm(ClassForm):
+    confirmDelete = SubmitField('Confirm Delete')
