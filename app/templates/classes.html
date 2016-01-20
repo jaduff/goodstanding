@@ -1,11 +1,13 @@
 <!-- extend base layout -->
 {% extends "base.html" %}
 
-{% block content %}
+{% block page_content %}
+	<div class="page-header">
     <h1>{{ user.firstname }}'s Classes</h1>
     {% for gsClass in gsClasses|sort(attribute='cohort') %}
     <p>
     {{ gsClass.classCode }} - {{ gsClass.cohort }}
     </p>
     {% endfor %}
+	</div>
 {% endblock %}
