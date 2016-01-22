@@ -1,7 +1,8 @@
 from flask import render_template
 from flask.ext.appbuilder.models.sqla.interface import SQLAInterface
 from flask.ext.appbuilder import ModelView
-from app import appbuilder, db
+from app import appbuilder, db, models
+from app.models import *
 
 """
     Create your Views::
@@ -20,10 +21,23 @@ from app import appbuilder, db
 """
     Application wide 404 error handler
 """
+
+
 @appbuilder.app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html', base_template=appbuilder.base_template, appbuilder=appbuilder), 404
 
 db.create_all()
 
+class gsClassNoteModelView(ModelView):
+    datamodel = SQLAInterface(gsClassNote)
 
+class gsStudentModelView(ModelView):
+    datamodel = SQLAInterface(gsStudent)
+    related_views = [gsClassNoteModelView]
+
+class gsClassModelView(ModelView):
+    datamodel = SQLAInterface(gsClass)
+    related_views = [gsStudentModelView]
+
+appbuilder.add_view(gsClassModelView, "List Classes",icon = "fa-folder-open-o",category="Classes")
