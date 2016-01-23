@@ -18,6 +18,7 @@ requires = [
     'zope.sqlalchemy',
     'waitress',
     'deform',
+    'deform_bootstrap',
     ]
 
 setup(name='goodstanding',

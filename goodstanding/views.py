@@ -47,6 +47,6 @@ try it again.
 @view_config(route_name='classes', renderer='templates/formView.pt')
 def classView(request):
     schema = gsClassSchema()
-    classform = deform.Form(schema, buttoms=('submit',))
+    classform = deform.Form(schema, buttons=('submit',))
     form = classform.render()
     return dict(form=form)

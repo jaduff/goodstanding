@@ -7,3 +7,4 @@ transaction
 zope.sqlalchemy
 waitress
 deform
+deform_bootstrap
