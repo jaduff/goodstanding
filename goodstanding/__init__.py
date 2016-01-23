@@ -16,6 +16,7 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     config.include('pyramid_chameleon')
     config.add_static_view('static', 'static', cache_max_age=3600)
+    config.add_static_view('deform_static', 'deform:static')
     config.add_route('pyramid', '/pyramid')
     config.add_route('classes', '/classes')
     config.scan()

@@ -43,6 +43,7 @@ class gsUser(Base):
     username = Column(String(64), index=True, unique=True)
     FirstName = Column(String(120), index=True, unique=False)
     LastName = Column(String(120), index=True, unique=False)
+    myClasses = relationship('gsClass', back_populates="teacher")
 
     def __repr__(self):
         return '<User %r>' % (self.username)
@@ -61,7 +62,9 @@ class gsClass(Base):
     id = Column(Integer, primary_key=True)
     classCode = Column(String(64), index=True, unique=False)
     cohort = Column(Integer, index=True, unique=False)
-    teacher = Column(String(120), index=True, unique=False)
+    #teacher = Column(String(120), index=True, unique=False)
+    teacherid = Column(Integer, ForeignKey('gsUser.id'))
+    teacher = relationship('gsUser', back_populates="myClasses")
     calendarYear = Column(Integer, index=True, unique=False)
     students = relationship('gsStudent',
             secondary=gsClassStudent,

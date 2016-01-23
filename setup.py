@@ -17,6 +17,7 @@ requires = [
     'transaction',
     'zope.sqlalchemy',
     'waitress',
+    'deform',
     ]
 
 setup(name='goodstanding',

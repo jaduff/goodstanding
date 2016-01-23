@@ -5,6 +5,8 @@ from sqlalchemy.exc import DBAPIError
 
 from pyramid.httpexceptions import (HTTPFound, HTTPNotFound,)
 
+import deform.widget
+
 from .models import (
     DBSession,
     gsClassStudent,
@@ -13,6 +15,8 @@ from .models import (
     gsClass,
     gsClassNote
     )
+
+from .schemas import gsClassSchema
 
 
 @view_config(route_name='pyramid', renderer='templates/mytemplate.pt')
@@ -40,4 +44,9 @@ After you fix the problem, please restart the Pyramid application to
 try it again.
 """
 
-
+@view_config(route_name='classes', renderer='templates/formView.pt')
+def classView(request):
+    schema = gsClassSchema()
+    classform = deform.Form(schema, buttoms=('submit',))
+    form = classform.render()
+    return dict(form=form)
