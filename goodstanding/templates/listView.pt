@@ -2,7 +2,7 @@
 		<div metal:fill-slot="content">
 			<table>
 				<tr><th tal:repeat="heading headers" tal:content="heading"></th></tr>
-				<tr><td tal:repeat="data rows">G</td></tr>
+				<tr tal:repeat="row rows"><td tal:repeat="data row['data']" tal:content="data"></td></tr>
 			</table>
 	</div>
 	</metal:main>

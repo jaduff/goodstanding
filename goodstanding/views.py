@@ -58,15 +58,18 @@ class ListView:
         self.listheaders = [] #simple array of header names
         self.rows = [] #dictionary of data: dataArray, action: actionArray
 
+        for propDict in propArray:
+            self.listheaders.append(propDict['name']) #add each name to the header
+
         for obj in objectList:
             row = {}
             row['data'] = []
             row['action'] = []
             for propDict in propArray:
                 row['data'].append(str(getattr(obj, propDict['prop']))) #add array of data
-                self.listheaders.append(propDict['name']) #add each name to the header
             for action in actionArray:
                 row['action'].append({action['action']: action['url'] + action['identifier']}) #add array of actions
+            self.rows.append(row)
 
     def get_headers(self):
         return self.listheaders
