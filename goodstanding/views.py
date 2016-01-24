@@ -49,13 +49,14 @@ try it again.
 """
 
 class ListView:
-    listheaders = [] #simple array of header names
-    rows = [] #dictionary of data: dataArray, action: actionArray
 
     def __init__(self, objectList, propArray, actionArray):
         #objectList - array of objects with properties to serialise
         #propArray - array of dicts containing the property to serialise from objectList, and the name to display in the table header. Expect key of prop and name.
         #actionArray - array of action dicts to append to the end of each row. Expect keys of action and url. Action is the word to and url is the action. If the action requires a unique identifer, the key will be identifier.
+
+        self.listheaders = [] #simple array of header names
+        self.rows = [] #dictionary of data: dataArray, action: actionArray
 
         for obj in objectList:
             row = {}
