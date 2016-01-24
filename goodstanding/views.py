@@ -76,8 +76,12 @@ class classView:
         _classlist = DBSession.query(gsClass).all()
         classlist = []
         headers = ['classCode', 'cohort']
-        # want to create an array of dicts to pass to template: [{'classcode': '7sci_1', 'cohort': 7},{'classcode': '9sci_1', 'cohort': 9}]
-        return dict(list=classlist, title="List")
+        for gsclass in _classlist:
+            classarray = []
+            for prop in headers:
+                classarray.append(str(getattr(gsclass, prop)))
+            classlist.append(classarray)
+        return dict(list=classlist, headers = headers, title="List")
 
 @view_defaults(renderer='templates/notImplemented.pt')
 class notImplementedView:
