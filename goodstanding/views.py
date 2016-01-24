@@ -48,6 +48,32 @@ After you fix the problem, please restart the Pyramid application to
 try it again.
 """
 
+class ListView:
+    listheaders = [] #simple array of header names
+    rows = [] #dictionary of data: dataArray, action: actionArray
+
+    def __init__(self, objectList, propArray, actionArray):
+        #objectList - array of objects with properties to serialise
+        #propArray - array of dicts containing the property to serialise from objectList, and the name to display in the table header. Expect key of prop and name.
+        #actionArray - array of action dicts to append to the end of each row. Expect keys of action and url. Action is the word to and url is the action. If the action requires a unique identifer, the key will be identifier.
+
+        for obj in objectList:
+            row = {}
+            row['data'] = []
+            row['action'] = []
+            for propDict in propArray:
+                row['data'].append(str(getattr(obj, propDict['prop']))) #add array of data
+                self.listheaders.append(propDict['name']) #add each name to the header
+            for action in actionArray:
+                row['action'].append({action['action']: action['url'] + action['identifier']}) #add array of actions
+
+    def get_headers(self):
+        return self.listheaders
+
+    def get_rows(self):
+        return self.rows
+
+
 class classView:
 
     def __init__(self, request):
@@ -64,24 +90,19 @@ class classView:
                 appstruct = classform.validate(controls)
             except ValidationFailure as e:
                 return {'form':e.render()}
-            #Do something with data
             gsclass = gsClass(classCode=appstruct['classCode'], cohort=appstruct['cohort'])
             DBSession.add(gsclass)
-            return HTTPFound(self.request.route_url("Home"))
+            return HTTPFound(self.request.route_url("listclasses"))
         form = classform.render()
         return dict(form=form)
 
     @view_config(route_name='listclasses', renderer='templates/listView.pt')
     def listView(self):
-        _classlist = DBSession.query(gsClass).all()
-        classlist = []
-        headers = ['classCode', 'cohort']
-        for gsclass in _classlist:
-            classarray = []
-            for prop in headers:
-                classarray.append(str(getattr(gsclass, prop)))
-            classlist.append(classarray)
-        return dict(list=classlist, headers = headers, title="List")
+        classlist = DBSession.query(gsClass).all()
+        props = [{'prop': 'classCode', 'name': 'Class Code'}, {'prop': 'cohort', 'name': 'Cohort'}]
+        list_actions = [{'action': 'edit', 'url': '/classes/edit/', 'identifier': 'id'}]
+        listObject = ListView(classlist, props, list_actions)
+        return dict(rows=listObject.get_rows(), headers = listObject.get_headers(), title="List")
 
 @view_defaults(renderer='templates/notImplemented.pt')
 class notImplementedView:

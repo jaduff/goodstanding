@@ -1,8 +1,8 @@
 <metal:main use-macro="load: base.pt">
 		<div metal:fill-slot="content">
 			<table>
-				<tr><th tal:repeat="heading headers" tal:content="heading"></tr>
-				<tr tal:repeat="row list"><td tal:repeat="cell row" tal:content="cell"></td></tr>
+				<tr><th tal:repeat="heading headers" tal:content="heading"></th></tr>
+				<tr><td tal:repeat="data rows">G</td></tr>
 			</table>
 	</div>
 	</metal:main>
