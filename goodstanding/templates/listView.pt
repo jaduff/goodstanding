@@ -1,9 +1,7 @@
-<!DOCTYPE html>
-<html lang="$request.locale_name}">
-	<head>
-		<title>TESTING</title>	
-	</head>
-	<body>
-
-	</body>
-</html>
+<metal:main use-macro="load: base.pt">
+		<div metal:fill-slot="content">
+			<table>
+				<tr tal:repeat="row list"><td tal:repeat="cell row">1</td></tr>
+			</table>
+	</div>
+	</metal:main>

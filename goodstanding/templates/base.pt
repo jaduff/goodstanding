@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="$request.locale_name}">
+	<head>
+		<title>TESTING</title>	
+		<!-- Meta Tags -->
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<!-- CSS -->
+		<!-- JavaScript -->
+		<metal:content define-slot="head" />
+		<title tal:condition="exists: title">${title}</title>
+	</head>
+	<body>
+		<metal:content define-slot="header" />
+		<metal:content define-slot="content" />
+
+	</body>
+</html>

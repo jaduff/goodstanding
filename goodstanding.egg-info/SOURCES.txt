@@ -22,6 +22,8 @@ goodstanding/static/pyramid-16x16.png
 goodstanding/static/pyramid.png
 goodstanding/static/theme.css
 goodstanding/static/theme.min.css
+goodstanding/templates/base.pt
 goodstanding/templates/formView.pt
 goodstanding/templates/listView.pt
 goodstanding/templates/mytemplate.pt
+goodstanding/templates/notImplemented.pt

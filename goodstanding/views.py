@@ -1,11 +1,15 @@
 from pyramid.response import Response
-from pyramid.view import view_config
+from pyramid.view import (
+        view_config,
+        view_defaults,
+        )
 
 from sqlalchemy.exc import DBAPIError
 
 from pyramid.httpexceptions import (HTTPFound, HTTPNotFound,)
 
-import deform.widget
+import deform
+from deform import (widget, ValidationFailure)
 
 from .models import (
     DBSession,
@@ -44,9 +48,55 @@ After you fix the problem, please restart the Pyramid application to
 try it again.
 """
 
-@view_config(route_name='classes', renderer='templates/formView.pt')
-def classView(request):
-    schema = gsClassSchema()
-    classform = deform.Form(schema, buttons=('submit',))
-    form = classform.render()
-    return dict(form=form)
+class classView:
+
+    def __init__(self, request):
+        self.request = request
+
+    @view_config(route_name='addclass', renderer='templates/formView.pt')
+    def formView(self):
+        schema = gsClassSchema()
+        classform = deform.Form(schema, buttons=('submit',))
+        if 'submit' in self.request.POST:
+            controls = self.request.POST.items()
+
+            try:
+                appstruct = classform.validate(controls)
+            except ValidationFailure as e:
+                return {'form':e.render()}
+            #Do something with data
+            gsclass = gsClass(classCode=appstruct['classCode'], cohort=appstruct['cohort'])
+            DBSession.add(gsclass)
+            return HTTPFound(self.request.route_url("Home"))
+        form = classform.render()
+        return dict(form=form)
+
+    @view_config(route_name='listclasses', renderer='templates/listView.pt')
+    def listView(self):
+        _classlist = DBSession.query(gsClass).all()
+        classlist = []
+        headers = ['classCode', 'cohort']
+        # want to create an array of dicts to pass to template: [{'classcode': '7sci_1', 'cohort': 7},{'classcode': '9sci_1', 'cohort': 9}]
+        return dict(list=classlist, title="List")
+
+@view_defaults(renderer='templates/notImplemented.pt')
+class notImplementedView:
+    def __init__(self, request):
+        self.request=request
+        self.title = request.matched_route.pattern
+
+    @view_config(route_name='modifyclass')
+    def listclasses(self):
+        return dict(title=self.title)
+
+    @view_config(route_name='liststudents')
+    def listclasses(self):
+        return dict(title=self.title)
+
+    @view_config(route_name='addstudent')
+    def listclasses(self):
+        return dict(title=self.title)
+
+    @view_config(route_name='modifystudent')
+    def listclasses(self):
+        return dict(title=self.title)

@@ -1,20 +1,12 @@
-<!DOCTYPE html>
-<html lang="$request.locale_name}">
-	<head>
-		<title>TESTING</title>	
-		<!-- Meta Tags -->
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<!-- CSS -->
-		<link rel="stylesheet" href="/deform_static/css/form.css" type="text/css" />
-		<!-- JavaScript -->
-		<script type="text/javascript" src="/deform_static/scripts/jquery-2.0.3.min.js"></script>
-		<script type="text/javascript" src="/deform_static/scripts/deform.js"></script>
-	</head>
-	<body>
+<metal:main use-macro="load: base.pt">
+		<link metal:fill-slot="head" rel="stylesheet" href="/deform_static/css/form.css" type="text/css" />
+		<script metal:fill-slot="head" type="text/javascript" src="/deform_static/scripts/jquery-2.0.3.min.js"></script>
+		<script metal:fill-slot="head" type="text/javascript" src="/deform_static/scripts/deform.js"></script>
 
+		<div metal:fill-slot="content">
 		<p>${structure: form}</p>
 	<script type="text/javascript">
 		deform.load()
 	</script>
-	</body>
-</html>
+	</div>
+	</metal:main>

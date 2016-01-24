@@ -1,0 +1,5 @@
+<metal:main use-macro="load: base.pt">
+		<div metal:fill-slot="content">
+			<h1>The page <span tal:condition="exists: title" tal:replace="title"></span> is not implemented</h1>
+	</div>
+	</metal:main>
