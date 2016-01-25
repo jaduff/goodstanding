@@ -95,17 +95,21 @@ class classView:
 
 
     class gsClassSchema(colander.MappingSchema):
-        def check_class_exists_validator(node, value):
-            if DBSession.query(gsClass).filter_by(classCode=value).first():
+
+        def check_class_exists(node, value):
+            if DBSession.query(gsClass).filter_by(classCode=value['classCode']).first():
                 raise colander.Invalid(node, 'This class already exists')
-        classCode = colander.SchemaNode(colander.String(),
-                validator=check_class_exists_validator)
+
+        classCode = colander.SchemaNode(colander.String())
         cohort = colander.SchemaNode(colander.Integer())
 
     @view_config(route_name='addclass', renderer='templates/formView.pt')
     @view_config(route_name='modifyclass', renderer='templates/formView.pt')
     def formView(self):
-        schema = self.gsClassSchema()
+        if self.request.matched_route.name == 'modifyclass':
+            schema = self.gsClassSchema()
+        else:
+            schema = self.gsClassSchema(validator=classView.gsClassSchema.check_class_exists)
         classform = deform.Form(schema, buttons=('submit',))
         if 'submit' in self.request.POST:
             controls = self.request.POST.items()
