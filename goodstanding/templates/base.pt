@@ -10,6 +10,7 @@
 		<title tal:condition="exists: title">${title}</title>
 	</head>
 	<body>
+		<h1 tal:content="title">
 		<metal:content define-slot="header" />
 		<metal:content define-slot="content" />
 

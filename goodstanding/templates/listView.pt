@@ -1,9 +1,8 @@
 <metal:main use-macro="load: base.pt">
 	<div metal:fill-slot="content">
 		<table>
-			<tr><th tal:repeat="heading headers" tal:content="heading"></th></tr>
-action isn't a dict, its an array of dicts
-			<tr tal:repeat="row rows">
+			<tr><th tal:repeat="heading datalist['headers']" tal:content="heading"></th></tr>
+			<tr tal:repeat="row datalist['data']">
 				<td tal:repeat="data row['data']" tal:content="data"></td>
 				<td><span tal:repeat="action row['actions']">
 						<a tal:attributes="href action['url']" tal:content="action['action']">	

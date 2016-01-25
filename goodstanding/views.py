@@ -68,7 +68,11 @@ class ListView:
             for propDict in propArray:
                 row['data'].append(str(getattr(obj, propDict['prop']))) #add array of data
             for action in actionArray:
-                row['actions'].append({'action': action['action'], 'url': action['url'] + str(getattr(obj, action['identifier']))})
+                if 'identifier'in  action:
+                    url = action['url'] + str(getattr(obj, action['identifier']))
+                else:
+                    url = action['url']
+                row['actions'].append({'action': action['action'], 'url': url})
             self.rows.append(row)
 
     def get_headers(self):
@@ -77,6 +81,10 @@ class ListView:
     def get_rows(self):
         return self.rows
 
+    def get_list(self):
+        datadict = {'headers': self.listheaders, 'data': self.rows}
+        return datadict
+
 
 class classView:
 
@@ -84,6 +92,7 @@ class classView:
         self.request = request
 
     @view_config(route_name='addclass', renderer='templates/formView.pt')
+    @view_config(route_name='modifyclass', renderer='templates/formView.pt')
     def formView(self):
         schema = gsClassSchema()
         classform = deform.Form(schema, buttons=('submit',))
@@ -94,29 +103,33 @@ class classView:
                 appstruct = classform.validate(controls)
             except ValidationFailure as e:
                 return {'form':e.render()}
+            #need validation to check if this classcode already used by this teacher
+            #maybe reload form with schema as provided, but add an error message at the top? Flash message?
             gsclass = gsClass(classCode=appstruct['classCode'], cohort=appstruct['cohort'])
             DBSession.add(gsclass)
             return HTTPFound(self.request.route_url("listclasses"))
-        form = classform.render()
+        if self.request.matched_route.name == 'modifyclass':
+            gsclass = DBSession.query(gsClass).filter_by(classCode=self.request.matchdict['classcode']).first()
+            appstruct = {'classCode': gsclass.classCode, 'cohort': gsclass.cohort}
+            form = classform.render(appstruct)
+        else:
+            form = classform.render()
         return dict(form=form)
 
     @view_config(route_name='listclasses', renderer='templates/listView.pt')
     def listView(self):
         classlist = DBSession.query(gsClass).all()
         props = [{'prop': 'classCode', 'name': 'Class Code'}, {'prop': 'cohort', 'name': 'Cohort'}]
-        list_actions = [{'action': 'edit', 'url': '/classes/edit/', 'identifier': 'classCode'}, {'action': 'delete', 'url': '/classes/delete/', 'identifier': 'classCode'}]
+        list_actions = [{'action': 'edit', 'url': '/classes/edit/', 'identifier': 'classCode'}, {'action': 'delete', 'url': '/classes/delete/'}]
         listObject = ListView(classlist, props, list_actions)
-        return dict(rows=listObject.get_rows(), headers = listObject.get_headers(), title="List")
+        return dict(datalist=listObject.get_list(), title="My Classes")
+
 
 @view_defaults(renderer='templates/notImplemented.pt')
 class notImplementedView:
     def __init__(self, request):
         self.request=request
         self.title = request.matched_route.pattern
-
-    @view_config(route_name='modifyclass')
-    def listclasses(self):
-        return dict(title=self.title)
 
     @view_config(route_name='liststudents')
     def listclasses(self):
