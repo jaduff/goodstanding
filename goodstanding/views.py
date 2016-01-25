@@ -96,8 +96,8 @@ class classView:
 
     class gsClassSchema(colander.MappingSchema):
         def check_class_exists_validator(node, value):
-            if DBSession.query(gsClass).filter_by(value).first():
-                raise Invalid(node, 'This class already exists')
+            if DBSession.query(gsClass).filter_by(classCode=value).first():
+                raise colander.Invalid(node, 'This class already exists')
         classCode = colander.SchemaNode(colander.String(),
                 validator=check_class_exists_validator)
         cohort = colander.SchemaNode(colander.Integer())
