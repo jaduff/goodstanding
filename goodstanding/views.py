@@ -64,11 +64,11 @@ class ListView:
         for obj in objectList:
             row = {}
             row['data'] = []
-            row['action'] = []
+            row['actions'] = []
             for propDict in propArray:
                 row['data'].append(str(getattr(obj, propDict['prop']))) #add array of data
             for action in actionArray:
-                row['action'].append({action['action']: action['url'] + action['identifier']}) #add array of actions
+                row['actions'].append({'action': action['action'], 'url': action['url'] + str(getattr(obj, action['identifier']))})
             self.rows.append(row)
 
     def get_headers(self):
@@ -104,7 +104,7 @@ class classView:
     def listView(self):
         classlist = DBSession.query(gsClass).all()
         props = [{'prop': 'classCode', 'name': 'Class Code'}, {'prop': 'cohort', 'name': 'Cohort'}]
-        list_actions = [{'action': 'edit', 'url': '/classes/edit/', 'identifier': 'id'}]
+        list_actions = [{'action': 'edit', 'url': '/classes/edit/', 'identifier': 'classCode'}, {'action': 'delete', 'url': '/classes/delete/', 'identifier': 'classCode'}]
         listObject = ListView(classlist, props, list_actions)
         return dict(rows=listObject.get_rows(), headers = listObject.get_headers(), title="List")
 
