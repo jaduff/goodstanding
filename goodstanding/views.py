@@ -4,6 +4,8 @@ from pyramid.view import (
         view_defaults,
         )
 
+import colander
+
 from sqlalchemy.exc import DBAPIError
 
 from pyramid.httpexceptions import (HTTPFound, HTTPNotFound,)
@@ -20,7 +22,7 @@ from .models import (
     gsClassNote
     )
 
-from .schemas import gsClassSchema
+
 
 
 @view_config(route_name='pyramid', renderer='templates/mytemplate.pt')
@@ -91,10 +93,19 @@ class classView:
     def __init__(self, request):
         self.request = request
 
+
+    class gsClassSchema(colander.MappingSchema):
+        def check_class_exists_validator(node, value):
+            if DBSession.query(gsClass).filter_by(value).first():
+                raise Invalid(node, 'This class already exists')
+        classCode = colander.SchemaNode(colander.String(),
+                validator=check_class_exists_validator)
+        cohort = colander.SchemaNode(colander.Integer())
+
     @view_config(route_name='addclass', renderer='templates/formView.pt')
     @view_config(route_name='modifyclass', renderer='templates/formView.pt')
     def formView(self):
-        schema = gsClassSchema()
+        schema = self.gsClassSchema()
         classform = deform.Form(schema, buttons=('submit',))
         if 'submit' in self.request.POST:
             controls = self.request.POST.items()

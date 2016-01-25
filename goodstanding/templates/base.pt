@@ -7,10 +7,10 @@
 		<!-- CSS -->
 		<!-- JavaScript -->
 		<metal:content define-slot="head" />
-		<title tal:condition="exists: title">${title}</title>
+		<title tal:condition="exists: title" tal:content="title" />
 	</head>
 	<body>
-		<h1 tal:content="title">
+		<h1 tal:condition="exists: title" tal:content="title" />
 		<metal:content define-slot="header" />
 		<metal:content define-slot="content" />
 
