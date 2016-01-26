@@ -1,0 +1,11 @@
+<metal:main use-macro="load: base.pt">
+	<div metal:fill-slot="content">
+		<table tal:condition="exists: gsclasses">
+			<tr><th>Class Code</th><th>Cohort</th></tr>
+			<tr tal:repeat="gsclass gsclasses">
+				<td tal:content="gsclass.classCode" />
+				<td tal:content="gsclass.cohort" /> 
+					<td><a tal:attributes="href req.route_url("'modifyclass', classCode=gsclass.classcode')" tal:content="Edit"></td></tr>
+		</table>
+	</div>
+</metal:main>

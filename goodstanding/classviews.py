@@ -111,11 +111,8 @@ class classView:
         form = classform.render(appstruct)
         return dict(form=form)
 
-    @view_config(route_name='listclasses', renderer='templates/listView.pt')
+    @view_config(route_name='listclasses', renderer='templates/classlistView.pt')
     def listclassesView(self):
-        classlist = DBSession.query(gsClass).all()
-        props = [{'prop': 'classCode', 'name': 'Class Code'}, {'prop': 'cohort', 'name': 'Cohort'}]
-        list_actions = [{'action': 'edit', 'url': "/classes/edit", 'identifier': 'classCode'}]
-        listObject = ListView(classlist, props, list_actions)
+        gsclasses = DBSession.query(gsClass).all()
         bottomlinks = [{'name': 'Add Class', 'url': self.request.route_url("addclass")}]
-        return dict(datalist=listObject.get_list(), title="My Classes", bottomlinks=bottomlinks)
+        return dict(gsclasses=gsclasses, title="My Classes", bottomlinks=bottomlinks, req=self.request)
