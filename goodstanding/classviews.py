@@ -78,7 +78,14 @@ class classView:
             return HTTPNotFound(comment='Class does not exist', detail=detail)
         #modifyclass allows database submission of existing class
         schema = self.gsClassSchema()
-        classform = deform.Form(schema, buttons=('submit',))
+        if 'Delete' in self.request.POST:
+            confirm_delete = deform.Button(name='confirm_delete', css_class='delete button', title="Yes, really delete " + self.request.params['classCode'])
+            classform = deform.Form(schema, buttons=(confirm_delete,))
+        elif 'confirm_delete' in self.request.POST:
+            DBSession.delete(gsclass)
+            return HTTPFound(self.request.route_url("listclasses"))
+        else:
+            classform = deform.Form(schema, buttons=('Delete', 'Submit'))
 
         if 'submit' in self.request.POST:
             #Handle submitted form
