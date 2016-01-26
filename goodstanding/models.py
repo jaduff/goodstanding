@@ -40,7 +40,7 @@ gsClassStudent = Table('gsClassStudent',
 class gsUser(Base):
     __tablename__ = 'gsUser'
     id = Column(Integer, primary_key=True)
-    username = Column(String(64), index=True, unique=True)
+    username = Column(String(120), index=True, unique=True)
     FirstName = Column(String(120), index=True, unique=False)
     LastName = Column(String(120), index=True, unique=False)
     myClasses = relationship('gsClass', back_populates="teacher")

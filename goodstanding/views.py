@@ -58,14 +58,3 @@ class notImplementedView:
         self.request=request
         self.title = request.matched_route.pattern
 
-    @view_config(route_name='liststudents')
-    def listclasses(self):
-        return dict(title=self.title)
-
-    @view_config(route_name='addstudent')
-    def listclasses(self):
-        return dict(title=self.title)
-
-    @view_config(route_name='modifystudent')
-    def listclasses(self):
-        return dict(title=self.title)

@@ -18,8 +18,8 @@ class ListView:
             for propDict in propArray:
                 row['data'].append(str(getattr(obj, propDict['prop']))) #add array of data
             for action in actionArray:
-                if 'identifier'in  action:
-                    url = action['url'] + str(getattr(obj, action['identifier']))
+                if 'identifier'in action:
+                    url = action['url'] + "/" + str(getattr(obj, action['identifier']))
                 else:
                     url = action['url']
                 row['actions'].append({'action': action['action'], 'url': url})
