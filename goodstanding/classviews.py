@@ -37,8 +37,8 @@ class classView:
             if DBSession.query(gsClass).filter_by(classCode=value['classCode']).first():
                 raise colander.Invalid(node, 'This class already exists')
 
-        classCode = colander.SchemaNode(colander.String())
-        cohort = colander.SchemaNode(colander.Integer())
+        classCode = colander.SchemaNode(colander.String(), title="Class Code")
+        cohort = colander.SchemaNode(colander.Integer(), title="Cohort")
 
     @view_config(route_name='addclass', renderer='templates/formView.pt')
     def addformView(self):

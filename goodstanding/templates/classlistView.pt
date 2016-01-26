@@ -5,7 +5,7 @@
 			<tr tal:repeat="gsclass gsclasses">
 				<td tal:content="gsclass.classCode" />
 				<td tal:content="gsclass.cohort" /> 
-					<td><a tal:attributes="href req.route_url("'modifyclass', classCode=gsclass.classcode')" tal:content="Edit"></td></tr>
+					<td><a tal:attributes="href req.route_url('modifyclass', classcode=gsclass.classCode)">Edit</a></td></tr>
 		</table>
 	</div>
 </metal:main>

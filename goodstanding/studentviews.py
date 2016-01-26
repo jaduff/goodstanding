@@ -38,11 +38,11 @@ class studentView:
                 raise colander.Invalid(node, 'This student already exists')
 
         id= colander.SchemaNode(colander.Integer())
-        FirstName = colander.SchemaNode(colander.String())
-        LastName = colander.SchemaNode(colander.String())
+        FirstName = colander.SchemaNode(colander.String(), title="First Name")
+        LastName = colander.SchemaNode(colander.String(), title="Last Name")
         username = colander.SchemaNode(colander.String(), missing="") 
-        cohort = colander.SchemaNode(colander.Integer())
-        current = colander.SchemaNode(colander.Boolean(), default=True)
+        cohort = colander.SchemaNode(colander.Integer(), title = "Cohort")
+        current = colander.SchemaNode(colander.Boolean(), default=True, title="Current")
 
     @view_config(route_name='addstudent', renderer='templates/formView.pt')
     def addformView(self):
@@ -116,11 +116,8 @@ class studentView:
         form = studentform.render(appstruct)
         return dict(form=form)
 
-    @view_config(route_name='liststudents', renderer='templates/listView.pt')
+    @view_config(route_name='liststudents', renderer='templates/studentlistView.pt')
     def listView(self):
-        studentlist = DBSession.query(gsStudent).all()
-        props = [{'prop': 'FirstName', 'name': 'First Name'}, {'prop': 'LastName', 'name': 'Last Name'},  {'prop': 'cohort', 'name': 'Cohort'}, {'prop': 'current', 'name': 'Cohort'}]
-        list_actions = [{'action': 'edit', 'url': '/students/modify', 'identifier': 'id'}]
-        listObject = ListView(studentlist, props, list_actions)
+        gsstudents = DBSession.query(gsStudent).all()
         bottomlinks = [{'name': 'Add Student', 'url': self.request.route_url("addstudent")}]
-        return dict(datalist=listObject.get_list(), title="Students", bottomlinks=bottomlinks)
+        return dict(gsstudents=gsstudents, title="Students", bottomlinks=bottomlinks, req=self.request)
