@@ -14,5 +14,10 @@
 		<metal:content define-slot="header" />
 		<metal:content define-slot="content" />
 
+	<ul class="links" tal:condition="exists:bottomlinks">
+		<li tal:repeat="link bottomlinks">
+			<a href="#" tal:attributes="href link['url']" tal:content="link['name']" />
+		</li>
+	</ul>
 	</body>
 </html>
