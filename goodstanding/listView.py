@@ -15,6 +15,7 @@ class ListView:
             row = {}
             row['data'] = []
             row['actions'] = []
+            row['url'] = []
             for propDict in propArray:
                 row['data'].append(str(getattr(obj, propDict['prop']))) #add array of data
             for action in actionArray:

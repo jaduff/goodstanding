@@ -41,7 +41,7 @@ class classView:
         cohort = colander.SchemaNode(colander.Integer())
 
     @view_config(route_name='addclass', renderer='templates/formView.pt')
-    def formView(self):
+    def addformView(self):
         #addclass does not allow submission of already existing class
         schema = self.gsClassSchema(validator=classView.gsClassSchema.check_class_exists)
         classform = deform.Form(schema, buttons=('submit',))
@@ -69,7 +69,7 @@ class classView:
         return dict(form=form)
 
     @view_config(route_name='modifyclass', renderer='templates/formView.pt')
-    def formView(self):
+    def modifyformView(self):
         rclasscode = self.request.matchdict['classcode']
         #check that class exists before continuing
         gsclass = DBSession.query(gsClass).filter_by(classCode=rclasscode).first()
@@ -112,7 +112,7 @@ class classView:
         return dict(form=form)
 
     @view_config(route_name='listclasses', renderer='templates/listView.pt')
-    def listView(self):
+    def listclassesView(self):
         classlist = DBSession.query(gsClass).all()
         props = [{'prop': 'classCode', 'name': 'Class Code'}, {'prop': 'cohort', 'name': 'Cohort'}]
         list_actions = [{'action': 'edit', 'url': "/classes/edit", 'identifier': 'classCode'}]

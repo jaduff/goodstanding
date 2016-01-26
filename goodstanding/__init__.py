@@ -22,6 +22,7 @@ def main(global_config, **settings):
     config.add_route('listclasses', '/classes')
     config.add_route('addclass', '/classes/add')
     config.add_route('modifyclass', '/classes/{action}/{classcode}')
+    config.add_route('viewclass', '/class/{classcode}')
     config.add_route('Home', '/')
     config.add_route('liststudents', '/students')
     config.add_route('addstudent', '/students/add')

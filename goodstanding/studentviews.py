@@ -45,7 +45,7 @@ class studentView:
         current = colander.SchemaNode(colander.Boolean(), default=True)
 
     @view_config(route_name='addstudent', renderer='templates/formView.pt')
-    def formView(self):
+    def addformView(self):
         #addstudent does not allow submission of already existing student
         schema = self.gsStudentSchema(validator=studentView.gsStudentSchema.check_student_exists)
         studentform = deform.Form(schema, buttons=('submit',))
@@ -73,7 +73,7 @@ class studentView:
         return dict(form=form)
 
     @view_config(route_name='modifystudent', renderer='templates/formView.pt')
-    def formView(self):
+    def modifyformView(self):
         rstudentid= self.request.matchdict['studentid']
         #check that student exists before continuing
         gsstudent = DBSession.query(gsStudent).filter_by(id=rstudentid).first()
