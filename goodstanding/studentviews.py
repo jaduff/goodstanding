@@ -82,8 +82,14 @@ class studentView:
             return HTTPNotFound(comment='Student does not exist', detail=detail)
         #modifystudent allows database submission of existing student
         schema = self.gsStudentSchema()
-        studentform = deform.Form(schema, buttons=('submit',))
-
+        if 'Delete' in self.request.POST:
+            confirm_delete = deform.Button(name='confirm_delete', css_class='delete button', title="Yes, really delete " + self.request.params['FirstName'] + " " + self.request.params['LastName'])
+            studentform = deform.Form(schema, buttons=(confirm_delete,))
+        elif 'confirm_delete' in self.request.POST:
+            DBSession.delete(gsstudent)
+            return HTTPFound(self.request.route_url("liststudents"))
+        else:
+            studentform = deform.Form(schema, buttons=('Delete', 'Submit'))
         if 'submit' in self.request.POST:
             #Handle submitted form
             controls = self.request.POST.items()
@@ -93,7 +99,6 @@ class studentView:
                 appstruct = studentform.validate(controls)
             except ValidationFailure as e:
                 return {'form':e.render()}
-
 
             #populate gsstudent with data from validated form, ready to submit to database
             gsstudent.id=appstruct['id']
