@@ -44,27 +44,44 @@ class classView:
     @view_config(route_name='modifyclass', renderer='templates/formView.pt')
     def formView(self):
         if self.request.matched_route.name == 'modifyclass':
+            rclasscode = self.request.matchdict['classcode']
+            #check that class exists before continuing
+            gsclass = DBSession.query(gsClass).filter_by(classCode=rclasscode).first()
+            if not gsclass:
+                detail = "Class " + rclasscode + " does not exist."
+                return HTTPNotFound(comment='Class does not exist', detail=detail)
+            #modifyclass allows database submission of existing class
             schema = self.gsClassSchema()
         else:
+            #addclass does not allow submission of already existing class
             schema = self.gsClassSchema(validator=classView.gsClassSchema.check_class_exists)
         classform = deform.Form(schema, buttons=('submit',))
+
         if 'submit' in self.request.POST:
+            #Handle submitted form
             controls = self.request.POST.items()
 
             try:
+                #validate form
                 appstruct = classform.validate(controls)
             except ValidationFailure as e:
                 return {'form':e.render()}
-            #need validation to check if this classcode already used by this teacher
-            #maybe reload form with schema as provided, but add an error message at the top? Flash message?
+
+
+            #populate gsclass with data from validated form, ready to submit to database
             gsclass = gsClass(classCode=appstruct['classCode'], cohort=appstruct['cohort'])
             DBSession.add(gsclass)
+
+            #After successful form submission, return to list of classes
             return HTTPFound(self.request.route_url("listclasses"))
+
         if self.request.matched_route.name == 'modifyclass':
-            gsclass = DBSession.query(gsClass).filter_by(classCode=self.request.matchdict['classcode']).first()
+            #modifyclass requires form to be prefilled with data from the database
             appstruct = {'classCode': gsclass.classCode, 'cohort': gsclass.cohort}
             form = classform.render(appstruct)
         else:
+
+            #render blank form for creation of new class
             form = classform.render()
         return dict(form=form)
 
