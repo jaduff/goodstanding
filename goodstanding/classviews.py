@@ -13,6 +13,8 @@ from pyramid.httpexceptions import (HTTPFound, HTTPNotFound,)
 
 import deform
 from deform import (widget, ValidationFailure)
+from pkg_resources import resource_filename
+from deform import ZPTRendererFactory
 
 from .models import (
     DBSession,
@@ -127,7 +129,10 @@ class classView():
         for student in allstudents:
             studentsstruct.append({'studentid': student.id, 'FirstName': student.FirstName, 'LastName': student.LastName})
         appstruct = {'classCode': gsclass.classCode, 'cohort': gsclass.cohort, 'students': studentsstruct}
-        form = classform.render(appstruct)
+        deform_templates = resource_filename('deform', 'templates')
+        search_path = ('/Users/jaduff/Documents/projects/programming/python/goodstanding/goodstanding/templates/forms')
+        renderer = ZPTRendererFactory(search_path)
+        form = classform.render(appstruct, renderer=renderer)
         return dict(form=form)
 
     @view_config(route_name='listclasses', renderer='templates/classlistView.pt')
