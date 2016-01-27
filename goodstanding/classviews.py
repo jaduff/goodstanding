@@ -7,6 +7,7 @@ from pyramid.view import (
 import colander
 
 from sqlalchemy.exc import DBAPIError
+from sqlalchemy.orm import exc
 
 from pyramid.httpexceptions import (HTTPFound, HTTPNotFound,)
 
@@ -24,26 +25,39 @@ from .models import (
 
 from .listView import ListView
 
+class Student(colander.MappingSchema):
+    studentid = colander.SchemaNode(colander.Integer())
+    FirstName = colander.SchemaNode(colander.String())
+    LastName = colander.SchemaNode(colander.String())
 
-class classView:
+class Students(colander.SequenceSchema):
+    Students = Student()
+
+class gsClassSchema(colander.MappingSchema):
+    #validator to check if class already exists
+    def check_class_exists(node, value):
+        try:
+            gsclass = DBSession.query(gsClass).filter_by(classCode=value['classCode']).one()
+        except exc.NoResultFound:
+            pass
+        except exc.MultipleResultsFound:
+            raise colander.Invalid(node, 'This class already exists')
+
+    #class details
+    classCode = colander.SchemaNode(colander.String(), title="Class Code")
+    cohort = colander.SchemaNode(colander.Integer(), title="Cohort")
+    students = Students()
+
+class classView():
 
     def __init__(self, request):
         self.request = request
 
 
-    class gsClassSchema(colander.MappingSchema):
-
-        def check_class_exists(node, value):
-            if DBSession.query(gsClass).filter_by(classCode=value['classCode']).first():
-                raise colander.Invalid(node, 'This class already exists')
-
-        classCode = colander.SchemaNode(colander.String(), title="Class Code")
-        cohort = colander.SchemaNode(colander.Integer(), title="Cohort")
-
     @view_config(route_name='addclass', renderer='templates/formView.pt')
     def addformView(self):
         #addclass does not allow submission of already existing class
-        schema = self.gsClassSchema(validator=classView.gsClassSchema.check_class_exists)
+        schema = gsClassSchema(validator=gsClassSchema.check_class_exists)
         classform = deform.Form(schema, buttons=('submit',))
 
         if 'submit' in self.request.POST:
@@ -72,12 +86,13 @@ class classView:
     def modifyformView(self):
         rclasscode = self.request.matchdict['classcode']
         #check that class exists before continuing
-        gsclass = DBSession.query(gsClass).filter_by(classCode=rclasscode).first()
-        if not gsclass:
+        try:
+            gsclass = DBSession.query(gsClass).filter_by(classCode=rclasscode).one()
+        except exc.NoResultFound:
             detail = "Class " + rclasscode + " does not exist."
             return HTTPNotFound(comment='Class does not exist', detail=detail)
         #modifyclass allows database submission of existing class
-        schema = self.gsClassSchema()
+        schema = gsClassSchema()
         if 'Delete' in self.request.POST:
             confirm_delete = deform.Button(name='confirm_delete', css_class='delete button', title="Yes, really delete " + self.request.params['classCode'])
             classform = deform.Form(schema, buttons=(confirm_delete,))
@@ -107,7 +122,11 @@ class classView:
             return HTTPFound(self.request.route_url("listclasses"))
 
         #modifyclass requires form to be prefilled with data from the database
-        appstruct = {'classCode': gsclass.classCode, 'cohort': gsclass.cohort}
+        allstudents = DBSession.query(gsStudent).filter_by(cohort=gsclass.cohort).order_by(gsStudent.LastName).all()
+        studentsstruct = []
+        for student in allstudents:
+            studentsstruct.append({'studentid': student.id, 'FirstName': student.FirstName, 'LastName': student.LastName})
+        appstruct = {'classCode': gsclass.classCode, 'cohort': gsclass.cohort, 'students': studentsstruct}
         form = classform.render(appstruct)
         return dict(form=form)
 
@@ -116,3 +135,14 @@ class classView:
         gsclasses = DBSession.query(gsClass).all()
         bottomlinks = [{'name': 'Add Class', 'url': self.request.route_url("addclass")}]
         return dict(gsclasses=gsclasses, title="My Classes", bottomlinks=bottomlinks, req=self.request)
+
+    @view_config(route_name='viewclass', renderer='templates/classstudentsView.pt')
+    def classstudentsView(self):
+        rclasscode = self.request.matchdict['classcode']
+        try:
+            gsclass = DBSession.query(gsClass).filter_by(classCode=rclasscode).one()
+        except exc.NoResultFound:
+            detail = "Class " + rclasscode + " does not exist."
+            return HTTPNotFound(comment='Class does not exist', detail=detail)
+        bottomlinks = [{'name': 'Edit Class', 'url': self.request.route_url("modifyclass", classcode=gsclass.classCode)}]
+        return dict(gsclass=gsclass, bottomlinks=bottomlinks, req=self.request)

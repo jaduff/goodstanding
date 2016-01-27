@@ -1,0 +1,14 @@
+<metal:main use-macro="load: base.pt">
+	<div metal:fill-slot="content">
+		<h1 tal:condition="exists: gsclass.classCode" tal:content="gsclass.classCode" />
+		<table tal:condition="exists: gsstudents">
+			<tr><th>Student Number</th><th>Last Name</th><th>First Name</th><th>Standing</th>
+			<tr tal:repeat="gsstudent gsstudents">
+				<td tal:content="gsstudent.LastName" />
+				<td tal:content="gsstudent.FirstName" />
+				<td tal:content="gsstudent.cohort" />
+				<td tal:content="gsstudent.current" />
+				<td><a tal:attributes="href req.route_url('modifystudent', studentid=gsstudent.id)">Edit</a></td></tr>
+		</table>
+	</div>
+</metal:main>

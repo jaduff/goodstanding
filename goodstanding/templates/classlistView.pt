@@ -3,9 +3,9 @@
 		<table tal:condition="exists: gsclasses">
 			<tr><th>Class Code</th><th>Cohort</th></tr>
 			<tr tal:repeat="gsclass gsclasses">
-				<td tal:content="gsclass.classCode" />
+				<td><a tal:attributes="href req.route_url('viewclass', classcode=gsclass.classCode)" tal:content="gsclass.classCode" />
 				<td tal:content="gsclass.cohort" /> 
-					<td><a tal:attributes="href req.route_url('modifyclass', classcode=gsclass.classCode)">Edit</a></td></tr>
+			</tr>
 		</table>
 	</div>
 </metal:main>
